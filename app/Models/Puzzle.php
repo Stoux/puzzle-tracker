@@ -36,6 +36,7 @@ class Puzzle extends Model implements HasMedia {
 		'artist',
 		'dimensions',
 		'description',
+        'website_label',
 	];
 
     protected $casts = [
@@ -91,7 +92,7 @@ class Puzzle extends Model implements HasMedia {
 
         $this->addMediaConversion('preview')
             ->format('webp')
-            ->fit(Fit::Contain, 300, 300);
+            ->fit(Fit::Contain, 500, 500);
 
     }
 

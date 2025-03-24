@@ -44,7 +44,8 @@ class ScrapeProductPageJob implements ShouldQueue
         // Parse into HTML
         $crawler = new Crawler((string) $response->getBody());
 
-        // TODO: Parse & save the tag?
+        // Parse the tag/label above the title (if any)
+        $this->parseTag($crawler);
 
         // Parse the label section for tags
         $this->parseLabels($crawler);
@@ -58,6 +59,16 @@ class ScrapeProductPageJob implements ShouldQueue
 
         // Parse the additional hints for this puzzle
         $this->parseHints($crawler);
+    }
+
+    protected function parseTag(Crawler $crawler): void
+    {
+        $block = $crawler->filter('.product-tag.');
+        if (! $block->count()) {
+            return;
+        }
+
+        $this->puzzle->website_label = trim($block->text());
     }
 
     protected function parseLabels(Crawler $crawler): void
@@ -87,7 +98,7 @@ class ScrapeProductPageJob implements ShouldQueue
             if ($label === 'Jaar') {
                 $this->puzzle->year_label = $value;
                 // Super dumb parsing by just assuming any 4 digits combo is the year
-                if (preg_match('/\d{4}/',  $value, $match)) {
+                if (preg_match('/\d{4}/', $value, $match)) {
                     $this->puzzle->year = (int) $match[0];
                 }
             }
@@ -101,24 +112,24 @@ class ScrapeProductPageJob implements ShouldQueue
 
     protected function parseHints(Crawler $crawler): void
     {
-        $hints = [ 1 => '#sizepopup', 2 => '#sizepopup2' ];
+        $hints = [1 => '#sizepopup', 2 => '#sizepopup2'];
         foreach ($hints as $hintNumber => $divId) {
             // Find the image element
-            $imageCrawler = $crawler->filter($divId . ' img');
-            if (!$imageCrawler->count()) {
+            $imageCrawler = $crawler->filter($divId.' img');
+            if (! $imageCrawler->count()) {
                 continue;
             }
 
             // Resolve the image URL for that element
             $imageElement = $imageCrawler->first();
-            $imageUrl =  $imageElement->attr('src');
+            $imageUrl = $imageElement->attr('src');
             if (str_starts_with($imageUrl, '//')) {
-                $imageUrl = 'https:' . $imageUrl;
+                $imageUrl = 'https:'.$imageUrl;
             }
             $imageBasename = basename(explode('?', $imageUrl)[0]);
 
             // Check if we've previously saved that image
-            $savedMedia = $this->puzzle->getHint( $hintNumber );
+            $savedMedia = $this->puzzle->getHint($hintNumber);
             $oldBaseName = $savedMedia?->getCustomProperty('shopify_basename');
             if ($imageBasename === $oldBaseName) {
                 // Already saved
@@ -144,9 +155,9 @@ class ScrapeProductPageJob implements ShouldQueue
             // Save the media
             try {
                 $this->puzzle->addMediaFromUrl($imageUrl)->withCustomProperties([
-                        'shopify_basename' => $imageBasename,
-                        'hint' => $hintNumber,
-                    ])->toMediaCollection(Puzzle::MEDIA_COLLECTION_HINTS);
+                    'shopify_basename' => $imageBasename,
+                    'hint' => $hintNumber,
+                ])->toMediaCollection(Puzzle::MEDIA_COLLECTION_HINTS);
             } catch (FileDoesNotExist|FileIsTooBig|FileCannotBeAdded $e) {
                 // Tough shit
                 \Log::warning('Failed to download hint', [
@@ -177,7 +188,7 @@ class ScrapeProductPageJob implements ShouldQueue
 
         // Should contain some <li>'s, assuming the second one is about size.
         $liElements = $section->filter('ul > li');
-        if ( $liElements->count() < 2 ) {
+        if ($liElements->count() < 2) {
             return;
         }
 
@@ -189,5 +200,4 @@ class ScrapeProductPageJob implements ShouldQueue
 
         $this->puzzle->dimensions = $text;
     }
-
 }

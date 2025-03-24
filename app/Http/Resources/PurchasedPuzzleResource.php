@@ -8,6 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /** @mixin PurchasedPuzzle */
 class PurchasedPuzzleResource extends JsonResource {
+
 	public function toArray( Request $request ): array {
 		return [
 			'id' => $this->id,
