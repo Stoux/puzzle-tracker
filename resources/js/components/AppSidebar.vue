@@ -16,7 +16,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Puzzels',
-        href: '/puzzles',
+        href: '/puzzels',
         icon: Puzzle,
     },
     {
