@@ -64,7 +64,7 @@ watchOnce(mainApi, (mainApi) => {
                             <img :src="image.full" alt="" class="rounded-md object-cover w-full h-full">
                         </DialogTrigger>
                         <DialogContent class="w-full h-full max-w-full">
-                            <div class="flex justify-center">
+                            <div class="flex justify-center max-w-[95wh] max-h-[95vh]">
                                 <img :src="image.full" alt="" class="rounded-md object-cover">
                             </div>
                         </DialogContent>

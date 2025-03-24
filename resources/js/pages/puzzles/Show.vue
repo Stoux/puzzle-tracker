@@ -67,7 +67,7 @@ const hints = computed<{ hint: number|string, image: string}[]>(() => {
 
                 <div class="relative">
                     <div class="pt-4 absolute">
-                        <span class="p-2 rounded-full border border-white" v-if="puzzle.website_label">
+                        <span class="p-2 rounded-full border text-gray-800 border-gray-800 dark:text-gray-100 dark:border-gray-100" v-if="puzzle.website_label">
                             {{ puzzle.website_label }}
                         </span>
                     </div>

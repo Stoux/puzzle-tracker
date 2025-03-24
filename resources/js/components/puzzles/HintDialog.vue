@@ -20,7 +20,7 @@ defineProps<{
         </DialogTrigger>
         <DialogContent class="w-full h-full max-w-full">
             <div class="flex justify-center">
-                <img :src="image" alt="" class="rounded-md object-cover">
+                <img loading="lazy" :src="image" alt="" class="rounded-md object-cover">
             </div>
         </DialogContent>
     </Dialog>
