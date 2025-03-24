@@ -63,7 +63,7 @@ class ScrapeProductPageJob implements ShouldQueue
 
     protected function parseTag(Crawler $crawler): void
     {
-        $block = $crawler->filter('.product-tag.');
+        $block = $crawler->filter('.product-tag');
         if (! $block->count()) {
             return;
         }
