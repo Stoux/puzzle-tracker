@@ -66,6 +66,18 @@ class Puzzle extends Model implements HasMedia {
         return $this->hasMany(PuzzleProgression::class);
     }
 
+    /**
+     * Get all PuzzleRelation models related to this Puzzle, regardless of whether this Puzzle is the 'puzzle_id' or 'relates_to_id'.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function relations(): HasMany
+    {
+        return $this->hasMany(PuzzleRelation::class, 'puzzle_id')
+            ->orWhere('relates_to_id', $this->id);
+    }
+
+
     public function images(): MediaCollection {
         return $this->getMedia(self::MEDIA_COLLECTION_IMAGES);
     }

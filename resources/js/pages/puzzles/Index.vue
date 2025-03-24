@@ -51,7 +51,6 @@ const availableTags = computed(() => {
     return Object.keys(tags).sort((a,b) => a.localeCompare(b));
 });
 const filteredPuzzles = computed<Puzzle[]>(() => {
-    console.log('recalc');
     // Early bail if no filters active
     if (!queryFilter.value && !availableYears.value.length && !availableTags.value.length) {
         return props.puzzles;
