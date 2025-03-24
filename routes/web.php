@@ -16,6 +16,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
 
     Route::post('puzzels/{puzzle}/progress', [ PuzzleProgressionController::class, 'save' ])->name('puzzles.progress.new');
     Route::put('puzzels/{puzzle}/progress/{progression}', [ PuzzleProgressionController::class, 'save' ])->name('puzzles.progress.edit');
+    Route::delete('puzzels/{puzzle}/progress/{progression}', [ PuzzleProgressionController::class, 'delete' ])->name('puzzles.progress.delete');
 
 });
 
