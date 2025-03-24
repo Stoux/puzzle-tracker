@@ -20,7 +20,7 @@ class PuzzleResource
             'collection_number' => $puzzle->collection_number,
             'number_of_pieces' => $puzzle->number_of_pieces,
             'number_of_pieces_label' => $puzzle->number_of_pieces_label,
-            'website_label' => $puzzle->website_label ?? 'Nieuw formaat',
+            'website_label' => $puzzle->website_label,
             'year' => $puzzle->year,
             'artist' => $puzzle->artist,
             'thumbnail' => $puzzle->getFirstMediaUrl(Puzzle::MEDIA_COLLECTION_IMAGES, 'preview'),

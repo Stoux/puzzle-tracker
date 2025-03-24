@@ -55,6 +55,9 @@ const hints = computed<{ hint: number|string, image: string}[]>(() => {
     return hints;
 });
 
+const tags = computed<string[]>(() => {
+    return [ props.puzzle.website_label, ...props.puzzle.tags ].filter(s => !!s) as string[];
+});
 
 </script>
 
@@ -66,9 +69,10 @@ const hints = computed<{ hint: number|string, image: string}[]>(() => {
             <div class="grid auto-rows-min gap-4 lg:grid-cols-2">
 
                 <div class="relative">
-                    <div class="pt-4 absolute">
-                        <span class="p-2 rounded-full border text-gray-800 border-gray-800 dark:text-gray-100 dark:border-gray-100" v-if="puzzle.website_label">
-                            {{ puzzle.website_label }}
+                    <div class="pt-4 absolute flex gap-2" v-if="tags.length">
+                        <span class="p-2 rounded-full border text-gray-800 border-gray-800 dark:text-gray-100 dark:border-gray-100"
+                            v-for="tag of tags">
+                            {{ tag }}
                         </span>
                     </div>
 
