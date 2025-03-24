@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import type {Puzzle} from "@/types/wasgij";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {AspectRatio} from "@/components/ui/aspect-ratio";
@@ -185,7 +185,7 @@ function toggleTag(event: Event, tag: string) {
                 </div>
             </div>
             <div class="grid auto-rows-min gap-4 xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2">
-                <a :href="route('puzzles.show', [ puzzle.id ] )" v-for="puzzle of filteredPuzzles" :key="puzzle.id">
+                <Link :href="route('puzzles.show', [ puzzle.id ] )" v-for="puzzle of filteredPuzzles" :key="puzzle.id" as="a">
                     <Card class="cursor-pointer">
                         <CardHeader>
                             <CardTitle>{{ puzzle.puzzle_title }}</CardTitle>
@@ -202,7 +202,7 @@ function toggleTag(event: Event, tag: string) {
                             </AspectRatio>
                         </CardContent>
                     </Card>
-                </a>
+                </Link>
             </div>
         </div>
     </AppLayout>
