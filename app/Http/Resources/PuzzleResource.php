@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Puzzle;
+use App\Models\PuzzleProgression;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -44,6 +45,10 @@ class PuzzleResource
                 2 => $puzzle->getHint(2)?->getUrl('webp'),
             ],
             'dimensions' => $puzzle->dimensions,
+
+            'progressions' => $puzzle->progressions->map(fn(PuzzleProgression $progression) => PuzzleProgressionResource::for($progression)),
+            'purchased' => $puzzle->purchases,
+            'relations' => $puzzle->related_puzzles,
         ];
 
         return $data;

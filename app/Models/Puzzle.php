@@ -58,12 +58,12 @@ class Puzzle extends Model implements HasMedia {
         return $this->belongsToMany(PuzzleTag::class);
     }
 
-    public function purchases(): HasMedia {
+    public function purchases(): HasMany {
         return $this->hasMany(PurchasedPuzzle::class);
     }
 
     public function progressions(): HasMany {
-        return $this->hasMany(PuzzleProgression::class);
+        return $this->hasMany(PuzzleProgression::class)->orderBy('updated_at', 'desc');
     }
 
     /**
@@ -71,7 +71,7 @@ class Puzzle extends Model implements HasMedia {
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function relations(): HasMany
+    public function related_puzzles(): HasMany
     {
         return $this->hasMany(PuzzleRelation::class, 'puzzle_id')
             ->orWhere('relates_to_id', $this->id);

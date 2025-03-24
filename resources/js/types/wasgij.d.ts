@@ -1,3 +1,4 @@
+import {PuzzleProgressionStatus} from "@/lib/data";
 
 export interface Puzzle {
 
@@ -26,4 +27,24 @@ export interface PuzzleDetails extends Puzzle {
     };
     dimensions: string|null;
 
+    progressions: PuzzleProgression[],
+
+}
+
+export interface PuzzleProgression {
+    id: number;
+    user: {
+        id: number;
+        name: string;
+    };
+    when: string|null;
+    started_on: string|null;
+    completed_on: string|null;
+    status: PuzzleProgressionStatus,
+    comments: string|null,
+    images: {
+        id: number,
+        comment: string|null,
+        url: string;
+    }[];
 }

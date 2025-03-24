@@ -5,8 +5,12 @@ namespace App\Models;
 use App\Enums\PuzzleProgressionStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class PuzzleProgression extends Model {
+class PuzzleProgression extends Model implements HasMedia {
+
+    use InteractsWithMedia;
 
 	protected $fillable = [
 		'puzzle_id',
@@ -31,6 +35,6 @@ class PuzzleProgression extends Model {
 		return $this->belongsTo( User::class );
 	}
 
-    // TODO: Add uploaded images
+    // TODO: Uploaded image should be replaced with a converted webp variant
 
 }

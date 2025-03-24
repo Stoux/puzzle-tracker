@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\PuzzleRelationType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -10,12 +11,12 @@ class PuzzleRelation extends Model
     protected $fillable = [
         'puzzle_id',
         'relates_to_id',
-        'is_identical',
-        'reason',
+        'type',
+        'comment',
     ];
 
     protected $casts = [
-        'is_identical' => 'boolean',
+        'type' => PuzzleRelationType::class,
     ];
 
     public function puzzle(): BelongsTo

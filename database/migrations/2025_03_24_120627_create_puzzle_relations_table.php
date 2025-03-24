@@ -11,8 +11,8 @@ return new class extends Migration{
             $table->id();
             $table->unsignedBigInteger('puzzle_id');
             $table->unsignedBigInteger('relates_to_id');
-            $table->boolean('is_identical');
-            $table->string('reason');
+            $table->string('type');
+            $table->string('comment')->nullable();
             $table->timestamps();
 
             $table->foreign('puzzle_id')->references('id')->on('puzzles')->cascadeOnDelete();
