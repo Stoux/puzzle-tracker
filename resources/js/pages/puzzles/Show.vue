@@ -21,7 +21,7 @@ const breadcrumbs = computed<BreadcrumbItem[]>(() => [
         href: '/puzzels',
     },
     {
-        title: props.puzzle.puzzle_title,
+        title: props.puzzle.collection_tag ? `${props.puzzle.collection_tag} ${props.puzzle.collection_number}: ${props.puzzle.puzzle_title}` : props.puzzle.puzzle_title,
         href: '/puzzels/' + props.puzzle.id,
     },
 ]);
