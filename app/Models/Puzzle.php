@@ -99,7 +99,6 @@ class Puzzle extends Model implements HasMedia {
     public function registerMediaConversions(?Media $media = null): void
     {
         $this->addMediaConversion('webp')
-            ->performOnCollections(self::MEDIA_COLLECTION_IMAGES)
             ->format('webp');
 
         $this->addMediaConversion('preview')

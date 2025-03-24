@@ -25,6 +25,8 @@ class PuzzlesController extends Controller
 
     public function show(Puzzle $puzzle)
     {
-
+        return Inertia::render('puzzles/Show', [
+            'puzzle' => PuzzleResource::forShow($puzzle),
+        ]);
     }
 }
