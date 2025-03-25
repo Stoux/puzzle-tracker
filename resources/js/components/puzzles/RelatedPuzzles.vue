@@ -17,7 +17,7 @@ const relatedPuzzles = computed<RelatedPuzzle[]>(() => {
     const puzzles: RelatedPuzzle[] = props.puzzle.relations.map(relation => {
         return {
             puzzle: relation.relates_to,
-            label: relation.is_source ? getTypeLabelFor(relation.type) : 'Origineel',
+            label: getTypeLabelFor(relation.type, relation.is_source),
         }
     })
 

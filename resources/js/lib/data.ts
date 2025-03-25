@@ -23,7 +23,20 @@ export enum PuzzleRelationType {
 }
 
 
-export function getTypeLabelFor(status: PuzzleRelationType) {
+export function getTypeLabelFor(status: PuzzleRelationType, isSource: boolean = true ) {
+    if (!isSource) {
+        switch(status) {
+            case PuzzleRelationType.RETRO:
+                return 'Origineel van Retro';
+            case PuzzleRelationType.RERELEASE_CHANGED:
+                return 'Vorige uitgave (Aangepast)';
+            case PuzzleRelationType.RERELEASE_NEAR_IDENTICAL:
+                return 'Vorige uitgave (Minimale aanpassingen)';
+            case PuzzleRelationType.RERELEASE_IDENTICAL:
+                return 'Vorige uitgave (Identiek)';
+        }
+    }
+
     switch (status) {
         case PuzzleRelationType.RERELEASE_CHANGED:
             return 'Heruitgave (Aangepast)';

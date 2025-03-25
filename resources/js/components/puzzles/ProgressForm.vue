@@ -43,7 +43,7 @@ function handleNewProgression() {
         form.comments = props.progression.comments ?? '';
         form.keepImages = props.progression?.images.map((item) => item.id) ?? [];
     } else {
-        form.status = PuzzleProgressionStatus.STARTED;
+        form.status = PuzzleProgressionStatus.FINISHED;
         form.started_on = '';
         form.completed_on = '';
         form.comments = '';
