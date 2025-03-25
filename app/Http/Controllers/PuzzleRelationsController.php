@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Puzzles\PuzzleRelationRequest;
+use App\Http\Resources\PuzzleRelationResource;
 use App\Models\Puzzle;
 use App\Models\PuzzleRelation;
 use Inertia\Inertia;
@@ -30,7 +31,7 @@ class PuzzleRelationsController extends Controller
 
         return Inertia::render('puzzles/Relations', [
             'all_puzzles' => $puzzles,
-            'relations' => $relations,
+            'relations' => $relations->map(fn(PuzzleRelation $relation) => PuzzleRelationResource::forIndex($relation)),
         ]);
     }
 

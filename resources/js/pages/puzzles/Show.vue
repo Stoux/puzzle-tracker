@@ -10,6 +10,7 @@ import ProgressStatusText from "@/components/puzzles/ProgressStatusText.vue";
 import PurchaseStatusText from "@/components/puzzles/PurchaseStatusText.vue";
 import ProgressOverview from "@/components/puzzles/ProgressOverview.vue";
 import PurchaseOverview from "@/components/puzzles/PurchaseOverview.vue";
+import RelatedPuzzles from "@/components/puzzles/RelatedPuzzles.vue";
 
 const props = defineProps<{
     puzzle: PuzzleDetails;
@@ -113,9 +114,8 @@ const tags = computed<string[]>(() => {
 
                     </div>
 
-                    <div class="flex flex-col gap-2">
-                        <h3 class="text-2xl">Gerelateerde puzzels</h3>
-
+                    <div class="flex flex-col gap-2" v-if="puzzle.relations.length">
+                        <RelatedPuzzles :puzzle="puzzle" />
                     </div>
 
                 </div>

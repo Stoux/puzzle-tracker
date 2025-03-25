@@ -29,6 +29,7 @@ export interface PuzzleDetails extends Puzzle {
 
     progressions: PuzzleProgression[],
     purchases: PurchasedPuzzle[],
+    relations: DetailedPuzzleRelation[],
 
 }
 
@@ -67,4 +68,11 @@ export interface BarePuzzleRelation {
     relates_to_id: number;
     type: PuzzleRelationType;
     comment: string|null;
+}
+
+export interface DetailedPuzzleRelation extends BarePuzzleRelation{
+    is_source: boolean,
+    relates_to: Puzzle,
+    progressions: PuzzleProgression[],
+    purchases: PurchasedPuzzle[],
 }

@@ -24,7 +24,7 @@ class PuzzleRelation extends Model
         return $this->belongsTo(Puzzle::class);
     }
 
-    public function relatesTo(): BelongsTo
+    public function relates_to(): BelongsTo
     {
         return $this->belongsTo(Puzzle::class, 'relates_to_id');
     }

@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use App\Models\PurchasedPuzzle;
 use App\Models\Puzzle;
 use App\Models\PuzzleProgression;
+use App\Models\PuzzleRelation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -49,7 +50,9 @@ class PuzzleResource
 
             'progressions' => $puzzle->progressions->map(fn(PuzzleProgression $progression) => PuzzleProgressionResource::for($progression)),
             'purchases' => $puzzle->purchases->map(fn(PurchasedPuzzle $purchase) => PurchasedPuzzleResource::for($purchase)),
-            'relations' => $puzzle->related_puzzles,
+            'relations' => $puzzle->related_puzzles
+                ->sortBy(fn(PuzzleRelation $relation) => $relation->relates_to->year)
+                ->map(fn(PuzzleRelation $relation) => PuzzleRelationResource::forDetail($puzzle, $relation)),
         ];
 
         return $data;
