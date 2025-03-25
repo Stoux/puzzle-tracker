@@ -114,7 +114,7 @@ const tags = computed<string[]>(() => {
 
                     </div>
 
-                    <div class="flex flex-col gap-2" v-if="puzzle.relations.length">
+                    <div class="flex flex-col gap-2" v-if="puzzle.next_in_collection || puzzle.previous_in_collection || puzzle.relations.length">
                         <RelatedPuzzles :puzzle="puzzle" />
                     </div>
 

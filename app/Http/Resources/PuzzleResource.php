@@ -13,8 +13,12 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 class PuzzleResource
 {
 
-    public static function forIndex( Puzzle $puzzle ): array
+    public static function forIndex( ?Puzzle $puzzle ): ?array
     {
+        if (!$puzzle) {
+            return null;
+        }
+
         return [
             'id' => $puzzle->id,
             'sku' => $puzzle->sku,
@@ -53,6 +57,9 @@ class PuzzleResource
             'relations' => $puzzle->related_puzzles
                 ->sortBy(fn(PuzzleRelation $relation) => $relation->relates_to->year)
                 ->map(fn(PuzzleRelation $relation) => PuzzleRelationResource::forDetail($puzzle, $relation)),
+
+            'next_in_collection' => PuzzleResource::forIndex( $puzzle->next_in_collection ),
+            'previous_in_collection' => PuzzleResource::forIndex( $puzzle->previous_in_collection ),
         ];
 
         return $data;

@@ -31,6 +31,9 @@ export interface PuzzleDetails extends Puzzle {
     purchases: PurchasedPuzzle[],
     relations: DetailedPuzzleRelation[],
 
+    next_in_collection: Puzzle|null,
+    previous_in_collection: Puzzle|null,
+
 }
 
 export interface PuzzleProgression {

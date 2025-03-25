@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\Conversions\Manipulations;
 use Spatie\MediaLibrary\HasMedia;
@@ -75,6 +76,18 @@ class Puzzle extends Model implements HasMedia {
     {
         return $this->hasMany(PuzzleRelation::class, 'puzzle_id')
             ->orWhere('relates_to_id', $this->id);
+    }
+
+    public function next_in_collection(): HasOne
+    {
+        return $this->hasOne(Puzzle::class, 'collection_tag', 'collection_tag')
+            ->where('collection_number', $this->collection_number + 1);
+    }
+
+    public function previous_in_collection(): HasOne
+    {
+        return $this->hasOne(Puzzle::class, 'collection_tag', 'collection_tag')
+            ->where('collection_number', $this->collection_number - 1);
     }
 
 
