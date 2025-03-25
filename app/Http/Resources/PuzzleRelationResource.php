@@ -32,7 +32,7 @@ class PuzzleRelationResource
 
         $data += [
             'is_source' => $is_source,
-            'relates_to' => PuzzleResource::forIndex( $relates_to ),
+            'relates_to' => PuzzleResource::forSimple( $relates_to ),
             'progressions' => $relates_to->progressions->map(fn(PuzzleProgression $progression) => PuzzleProgressionResource::for($progression)),
             'purchases' => $relates_to->purchases->map(fn(PurchasedPuzzle $purchase) => PurchasedPuzzleResource::for($purchase)),
         ];

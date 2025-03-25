@@ -2,10 +2,13 @@
 
 namespace App\Http\Resources;
 
+use App\Enums\PuzzleProgressionStatus;
+use App\Enums\PuzzleRelationType;
 use App\Models\PurchasedPuzzle;
 use App\Models\Puzzle;
 use App\Models\PuzzleProgression;
 use App\Models\PuzzleRelation;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -13,7 +16,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 class PuzzleResource
 {
 
-    public static function forIndex( ?Puzzle $puzzle ): ?array
+    public static function forSimple( ?Puzzle $puzzle ): ?array
     {
         if (!$puzzle) {
             return null;
@@ -35,9 +38,40 @@ class PuzzleResource
         ];
     }
 
-    public static function forShow( Puzzle $puzzle ): array
+    public static function forFilterableSimple(Puzzle $puzzle, int $userId): array
     {
-        $data = self::forIndex($puzzle);
+        $data = self::forDetails($puzzle);
+
+        // Doesn't want to autoload, force using the relation. Does slow down things quite a bit.
+        $rereleases = $puzzle->related_puzzles()->whereIn('type', [
+            PuzzleRelationType::RERELEASE_CHANGED,
+            PuzzleRelationType::RERELEASE_NEAR_IDENTICAL,
+            PuzzleRelationType::RERELEASE_IDENTICAL,
+        ])->get();
+
+        $finished = self::hasFinished($puzzle->progressions, $userId);
+        $ownPurchases = $puzzle->purchases->where('owner_id', $userId);
+
+        $data += [
+            'is_rerelease' => $rereleases->where('relates_to_id', $puzzle->id)->isNotEmpty(),
+            'purchased' => [
+                'own' => $ownPurchases->isNotEmpty(),
+                'anyone' => $puzzle->purchases->where('owner_id', '!=', $userId)->isNotEmpty(),
+                'at_me' => $ownPurchases->where('currently_at_id', '=', $userId)->isNotEmpty(),
+            ],
+            'finished' => [
+                'self' => $finished,
+                'related' => $finished || $rereleases->some(fn(PuzzleRelation $relation) => self::hasFinished($relation->puzzle->progressions, $userId) || self::hasFinished($relation->relates_to->progressions, $userId)),
+            ],
+        ];
+
+        return $data;
+    }
+
+
+    public static function forDetails( Puzzle $puzzle ): array
+    {
+        $data = self::forSimple($puzzle);
 
         $data += [
             'description' => $puzzle->description,
@@ -58,11 +92,20 @@ class PuzzleResource
                 ->sortBy(fn(PuzzleRelation $relation) => $relation->relates_to->year)
                 ->map(fn(PuzzleRelation $relation) => PuzzleRelationResource::forDetail($puzzle, $relation)),
 
-            'next_in_collection' => PuzzleResource::forIndex( $puzzle->next_in_collection ),
-            'previous_in_collection' => PuzzleResource::forIndex( $puzzle->previous_in_collection ),
+            'next_in_collection' => PuzzleResource::forSimple( $puzzle->next_in_collection ),
+            'previous_in_collection' => PuzzleResource::forSimple( $puzzle->previous_in_collection ),
         ];
 
         return $data;
     }
 
+    /**
+     * @param mixed $progressions
+     * @param int $userId
+     * @return mixed
+     */
+    protected static function hasFinished(Collection $progressions, int $userId): mixed
+    {
+        return $progressions->where('user_id', $userId)->where('status', PuzzleProgressionStatus::FINISHED)->isNotEmpty();
+    }
 }

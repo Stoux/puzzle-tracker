@@ -16,6 +16,19 @@ export interface Puzzle {
     tags: string[],
 }
 
+export interface FilterablePuzzle extends Puzzle{
+    is_rerelease: boolean;
+    purchased: {
+        own: boolean,
+        anyone: boolean,
+        at_me: boolean,
+    },
+    finished: {
+        self: boolean,
+        related: boolean,
+    }
+}
+
 export interface PuzzleDetails extends Puzzle {
 
     description: string|null;
