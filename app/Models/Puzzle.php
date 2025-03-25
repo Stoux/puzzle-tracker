@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\Traits\PuzzleCacheWiper;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -16,6 +17,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 class Puzzle extends Model implements HasMedia {
 
     use InteractsWithMedia;
+    use PuzzleCacheWiper;
 
     public const string MEDIA_COLLECTION_IMAGES = 'images';
     public const string MEDIA_COLLECTION_HINTS = 'hints';

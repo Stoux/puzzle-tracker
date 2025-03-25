@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Services\Traits\PuzzleCacheWiper;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PurchasedPuzzle extends Model {
+
+    use PuzzleCacheWiper;
 
     protected $fillable = [
         'puzzle_id',

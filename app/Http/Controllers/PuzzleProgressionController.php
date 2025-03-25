@@ -16,7 +16,7 @@ class PuzzleProgressionController extends Controller
         $user_id = $request->user()->id;
         $this->earlyBailIfFuckery($progression, $puzzle, $user_id);
 
-        // Strip the newImages value from it
+        // Strip the image values from it
         $validated = $request->validated();
         unset($validated['newImages']);
         unset($validated['deleteImages']);
@@ -34,9 +34,6 @@ class PuzzleProgressionController extends Controller
 
         // Handle file uploads
         $files = $request->file('newImages');
-        \Log::info('newImages', [
-            'f' => $files,
-        ]);
         if (! empty($files)) {
             foreach ($files as $newImage) {
                 $progression->addMedia($newImage)->toMediaCollection();

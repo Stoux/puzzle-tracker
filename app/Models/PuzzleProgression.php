@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\PuzzleProgressionStatus;
+use App\Services\Traits\PuzzleCacheWiper;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\MediaLibrary\HasMedia;
@@ -11,6 +12,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class PuzzleProgression extends Model implements HasMedia {
 
     use InteractsWithMedia;
+    use PuzzleCacheWiper;
 
 	protected $fillable = [
 		'puzzle_id',

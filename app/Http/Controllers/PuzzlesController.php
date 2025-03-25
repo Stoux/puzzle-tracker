@@ -6,6 +6,7 @@ use App\Http\Resources\PuzzleResource;
 use App\Http\Resources\UserResource;
 use App\Models\Puzzle;
 use App\Models\User;
+use App\Services\PuzzleCacheService;
 use Illuminate\Cache\Repository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -14,10 +15,8 @@ use Inertia\Inertia;
 class PuzzlesController extends Controller
 {
 
-    public const string CACHE_TAG = 'puzzle::index';
-
     public function __construct(
-        private readonly Repository $cache
+        private readonly PuzzleCacheService $cache
     )
     {
     }
@@ -41,16 +40,10 @@ class PuzzlesController extends Controller
     }
 
     protected function fetchPossibleCachedPuzzles(int $userId): Collection {
-        /* TODO: Renable cache & also wipe it throughout the app
-        $key = self::CACHE_TAG . '::' . $userId;
-        $cache = $this->cache->tags([ self::CACHE_TAG ]);
-
         // Check if the cache has a copy
-        if ($cache->has($key)) {
-            $data = $cache->get($key);
-            return collect(json_decode($data, true));
+        if ($cached = $this->cache->for($userId)) {
+            return $cached;
         }
-        */
 
         // Fetch all available puzzles
         $puzzles = Puzzle::orderBy('year', 'desc')->orderBy('collection_number', 'desc')->orderBy('published_at', 'desc')
@@ -59,10 +52,8 @@ class PuzzlesController extends Controller
         // Map to filterable entities
         $mapped = $puzzles->map(fn(Puzzle $puzzle) => PuzzleResource::forFilterableSimple($puzzle, $userId));
 
-        /* TODO: Renable cache
         // Cache it for a bit
-        $cache->put($key, json_encode($mapped), new \DateInterval('PT1H'));
-        */
+        $this->cache->put($userId, $mapped);
 
         return $mapped;
     }
