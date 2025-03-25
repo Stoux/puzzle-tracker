@@ -1,21 +1,25 @@
 <script setup lang="ts">
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import {PuzzleDetails, PuzzleProgression} from '@/types/wasgij';
+import {DetailedPuzzleRelation, PuzzleDetails, PuzzleProgression} from '@/types/wasgij';
 import { Button } from '@/components/ui/button';
-import { CirclePlus, Eye, Edit, Trash } from 'lucide-vue-next';
+import { CirclePlus, Edit, Eye, Trash } from 'lucide-vue-next';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import {getStatusLabelFor, PuzzleProgressionStatus} from '@/lib/data';
-import {router, usePage} from "@inertiajs/vue3";
-import {SharedData, User} from "@/types";
-import ProgressForm from "@/components/puzzles/ProgressForm.vue";
+import {getStatusLabelFor, getTypeLabelFor, PuzzleProgressionStatus, PuzzleRelationType} from '@/lib/data';
+import {Link, router, usePage} from '@inertiajs/vue3';
+import { SharedData, User } from '@/types';
+import ProgressForm from '@/components/puzzles/ProgressForm.vue';
 import {
-    Dialog, DialogClose,
+    Dialog,
+    DialogClose,
     DialogContent,
-    DialogDescription, DialogFooter,
+    DialogDescription,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger
-} from "@/components/ui/dialog";
+    DialogTrigger,
+} from '@/components/ui/dialog';
+import { computed } from 'vue';
+import TextLink from "@/components/TextLink.vue";
 
 const page = usePage<SharedData>();
 const user = page.props.auth.user as User;
@@ -24,16 +28,28 @@ const props = defineProps<{
     puzzle: PuzzleDetails;
 }>();
 
+const relatedProgressions = computed(() => {
+    const result: { progression: PuzzleProgression, relation: DetailedPuzzleRelation }[] = [];
+    props.puzzle.relations.filter((r) => r.type !== PuzzleRelationType.RETRO && r.progressions.length).forEach(relation => {
+        relation.progressions.forEach((progression) => {
+            result.push({
+                progression,
+                relation,
+            })
+        })
+    });
+    return result;
+});
+
 function deleteProgression(progression: PuzzleProgression) {
     router.delete(route('puzzles.progress.delete', [props.puzzle.id, progression.id]), {
         preserveScroll: true,
     });
 }
-
 </script>
 
 <template>
-    <div class="flex justify-between align-center">
+    <div class="align-center flex justify-between">
         <h2 class="text-xl" id="status-overview">Het raadsel opgelost door</h2>
         <ProgressForm :puzzle="puzzle">
             <Tooltip>
@@ -68,14 +84,13 @@ function deleteProgression(progression: PuzzleProgression) {
                         'text-red-600': progression.status === PuzzleProgressionStatus.ABORTED,
                         'text-green-600': progression.status === PuzzleProgressionStatus.FINISHED,
                     }"
-                    >
+                >
                     {{ getStatusLabelFor(progression.status) }}
                 </TableCell>
                 <TableCell>
                     {{ progression.when ?? '-' }}
                 </TableCell>
                 <TableCell>
-
                     <Dialog v-if="progression.comments || progression.images.length">
                         <DialogTrigger>
                             <Tooltip>
@@ -85,8 +100,11 @@ function deleteProgression(progression: PuzzleProgression) {
                                     </Button>
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                    <p>Bekijk {{ progression.user.name }}'s
-                                        {{ progression.comments ? 'opmerking' : '' }}{{ progression.comments && progression.images.length ? ' en ' : '' }}{{ progression.images.length ? 'foto\'s' : '' }}.</p>
+                                    <p>
+                                        Bekijk {{ progression.user.name }}'s {{ progression.comments ? 'opmerking' : ''
+                                        }}{{ progression.comments && progression.images.length ? ' en ' : ''
+                                        }}{{ progression.images.length ? "foto's" : '' }}.
+                                    </p>
                                     <p class="text-destructive">Pas op: Verklapt mogelijk de oplossing!</p>
                                 </TooltipContent>
                             </Tooltip>
@@ -104,9 +122,7 @@ function deleteProgression(progression: PuzzleProgression) {
 
                             <DialogFooter>
                                 <DialogClose>
-                                    <Button variant="secondary">
-                                        Sluiten
-                                    </Button>
+                                    <Button variant="secondary"> Sluiten </Button>
                                 </DialogClose>
                             </DialogFooter>
                         </DialogContent>
@@ -125,8 +141,6 @@ function deleteProgression(progression: PuzzleProgression) {
                         </Tooltip>
                     </ProgressForm>
 
-
-
                     <Dialog v-if="progression.user.id === user.id">
                         <DialogTrigger>
                             <Tooltip>
@@ -143,23 +157,45 @@ function deleteProgression(progression: PuzzleProgression) {
                         <DialogContent>
                             <DialogHeader>
                                 <DialogTitle>Wil je deze verwijderen?</DialogTitle>
-                                <DialogDescription>Weet je zeker dat je je voortgang wil verwijderen? Dit kan niet ongedaan gemaakt worden.</DialogDescription>
+                                <DialogDescription
+                                    >Weet je zeker dat je je voortgang wil verwijderen? Dit kan niet ongedaan gemaakt worden.</DialogDescription
+                                >
                             </DialogHeader>
                             <DialogFooter>
                                 <DialogClose>
-                                    <Button variant="secondary">
-                                        Annuleren
-                                    </Button>
+                                    <Button variant="secondary"> Annuleren </Button>
                                 </DialogClose>
                                 <DialogClose>
-                                    <Button variant="destructive" @click="deleteProgression(progression)">
-                                        Verwijderen
-                                    </Button>
+                                    <Button variant="destructive" @click="deleteProgression(progression)"> Verwijderen </Button>
                                 </DialogClose>
                             </DialogFooter>
                         </DialogContent>
                     </Dialog>
-
+                </TableCell>
+            </TableRow>
+        </TableBody>
+        <TableBody v-if="relatedProgressions.length">
+            <TableRow>
+                <TableHead colspan="3">Andere varianten van deze puzzel</TableHead>
+                <TableHead>Variant</TableHead>
+            </TableRow>
+            <TableRow v-for="related of relatedProgressions" :key="related.progression.id">
+                <TableCell>{{ related.progression.user.name }}</TableCell>
+                <TableCell
+                    :class="{
+                        'text-red-600': related.progression.status === PuzzleProgressionStatus.ABORTED,
+                        'text-green-600': related.progression.status === PuzzleProgressionStatus.FINISHED,
+                    }"
+                >
+                    {{ getStatusLabelFor(related.progression.status) }}
+                </TableCell>
+                <TableCell>
+                    {{ related.progression.when ?? '-' }}
+                </TableCell>
+                <TableCell>
+                    <TextLink :href="route('puzzles.show', related.relation.relates_to.id)" :title="related.relation.relates_to.puzzle_title">
+                        {{ getTypeLabelFor(related.relation.type ) }}
+                    </TextLink>
                 </TableCell>
             </TableRow>
         </TableBody>

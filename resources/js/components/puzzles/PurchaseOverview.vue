@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import {PurchasedPuzzle, PuzzleDetails, PuzzleProgression, type PuzzleUser} from '@/types/wasgij';
+import {
+    DetailedPuzzleRelation,
+    PurchasedPuzzle,
+    PuzzleDetails,
+    PuzzleProgression,
+    type PuzzleUser
+} from '@/types/wasgij';
 import { Button } from '@/components/ui/button';
 import { CirclePlus, Eye, Edit, Trash } from 'lucide-vue-next';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import {router, usePage} from "@inertiajs/vue3";
-import {SharedData, User} from "@/types";
+import {router} from "@inertiajs/vue3";
 import {
     Dialog, DialogClose,
     DialogContent,
@@ -15,14 +20,27 @@ import {
     DialogTrigger
 } from "@/components/ui/dialog";
 import PurchaseForm from "@/components/puzzles/PurchaseForm.vue";
-
-const page = usePage<SharedData>();
-const user = page.props.auth.user as User;
+import {computed} from "vue";
+import {getStatusLabelFor, getTypeLabelFor, PuzzleProgressionStatus, PuzzleRelationType} from "@/lib/data";
+import TextLink from "@/components/TextLink.vue";
 
 const props = defineProps<{
     puzzle: PuzzleDetails;
     users: PuzzleUser[],
 }>();
+
+const relatedPurchases = computed(() => {
+    const result: { purchase: PurchasedPuzzle, relation: DetailedPuzzleRelation }[] = [];
+    props.puzzle.relations.filter((r) => r.type !== PuzzleRelationType.RETRO && r.purchases.length).forEach(relation => {
+        relation.purchases.forEach((purchase) => {
+            result.push({
+                purchase,
+                relation,
+            })
+        })
+    });
+    return result;
+});
 
 function deletePurchase(progression: PurchasedPuzzle) {
     router.delete(route('puzzles.purchase.delete', [props.puzzle.id, progression.id]), {
@@ -115,6 +133,24 @@ function deletePurchase(progression: PurchasedPuzzle) {
                         </DialogContent>
                     </Dialog>
 
+                </TableCell>
+            </TableRow>
+        </TableBody>
+        <TableBody v-if="relatedPurchases.length">
+            <TableRow>
+                <TableHead colspan="3">Andere varianten van deze puzzel</TableHead>
+                <TableHead>Variant</TableHead>
+            </TableRow>
+            <TableRow v-for="related of relatedPurchases" :key="related.purchase.id">
+                <TableCell>{{ related.purchase.owner.name }}</TableCell>
+                <TableCell>{{ related.purchase.currently_at?.name ?? 'Onbekend?' }}</TableCell>
+                <TableCell>
+                    {{ related.purchase.purchased_on_formatted ?? '' }}
+                </TableCell>
+                <TableCell>
+                    <TextLink :href="route('puzzles.show', related.relation.relates_to.id)" :title="related.relation.relates_to.puzzle_title">
+                        {{ getTypeLabelFor(related.relation.type ) }}
+                    </TextLink>
                 </TableCell>
             </TableRow>
         </TableBody>
