@@ -64,7 +64,7 @@ const tags = computed<string[]>(() => {
 </script>
 
 <template>
-    <Head title="Puzzels" />
+    <Head :title="`Puzzels: ${puzzle.puzzle_title}`" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">

@@ -5,24 +5,29 @@ import NavUser from '@/components/NavUser.vue';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid, MailWarning, Puzzle } from 'lucide-vue-next';
+import { BookOpen, Folder, LayoutGrid, MailWarning, Puzzle, Link as LinkIcon } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
-    {
-        title: 'Overzicht',
-        href: '/dashboard',
-        icon: LayoutGrid,
-    },
+    // {
+    //     title: 'Overzicht',
+    //     href: '/dashboard',
+    //     icon: LayoutGrid,
+    // },
     {
         title: 'Puzzels',
-        href: '/puzzels',
+        href: route('puzzles'),
         icon: Puzzle,
     },
+    // {
+    //     title: 'Nieuw!',
+    //     href: '/new',
+    //     icon: MailWarning,
+    // },
     {
-        title: 'Nieuw!',
-        href: '/new',
-        icon: MailWarning,
+        title: 'Relaties',
+        href: route('relations'),
+        icon: LinkIcon,
     }
 ];
 

@@ -13,7 +13,7 @@ class PuzzlesController extends Controller
     public function index()
     {
         $puzzles = Puzzle::orderBy('year', 'desc')->orderBy('collection_number', 'desc')->orderBy('published_at', 'desc')
-            ->with('tags')
+            ->with(['tags', 'purchases', 'progressions', 'media'])
             ->get();
 
         //dd($puzzles[4]->toArray());

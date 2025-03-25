@@ -1,4 +1,4 @@
-import {PuzzleProgressionStatus} from "@/lib/data";
+import {PuzzleProgressionStatus, PuzzleRelationType} from "@/lib/data";
 
 export interface Puzzle {
 
@@ -59,4 +59,12 @@ export interface PurchasedPuzzle {
 export interface PuzzleUser {
     id: number;
     name: string;
+}
+
+export interface BarePuzzleRelation {
+    id: number;
+    puzzle_id: number;
+    relates_to_id: number;
+    type: PuzzleRelationType;
+    comment: string|null;
 }
