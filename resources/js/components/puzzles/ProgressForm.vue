@@ -6,9 +6,11 @@ import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetT
 import { onBeforeMount, ref, watch } from 'vue';
 import { Button } from '@/components/ui/button';
 import InputError from '@/components/InputError.vue';
-import { LoaderCircle } from 'lucide-vue-next';
+import {ImagePlus, CircleMinus} from 'lucide-vue-next';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {Checkbox} from "@/components/ui/checkbox";
+import {ScrollArea} from "@/components/ui/scroll-area";
 
 const props = defineProps<{
     puzzle: Puzzle;
@@ -27,8 +29,8 @@ const form = useForm({
     started_on: '',
     completed_on: '',
     comments: '',
-    keepImages: [] as number[],
-    newImages: [],
+    deleteImages: [] as number[],
+    newImages: [] as (File|undefined)[],
 });
 
 // Keep track of the open state (so we can manually close it)
@@ -36,18 +38,17 @@ const isOpen = ref(false);
 
 function handleNewProgression() {
     form.newImages = [];
+    form.deleteImages = [];
     if (props.progression) {
         form.status = props.progression.status;
         form.started_on = props.progression.started_on ?? '';
         form.completed_on = props.progression.completed_on ?? '';
         form.comments = props.progression.comments ?? '';
-        form.keepImages = props.progression?.images.map((item) => item.id) ?? [];
     } else {
         form.status = PuzzleProgressionStatus.FINISHED;
         form.started_on = '';
         form.completed_on = '';
         form.comments = '';
-        form.keepImages = [];
     }
 }
 
@@ -57,18 +58,34 @@ watch(
 );
 onBeforeMount(() => handleNewProgression());
 
+function addPhoto() {
+    form.newImages.push(undefined);
+}
+
+function toggleDeleteImage(id: number) {
+   const indexOf = form.deleteImages.indexOf(id);
+   if (indexOf === -1) {
+       form.deleteImages = [ ...form.deleteImages, id ];
+   } else {
+       const copy = [ ...form.deleteImages ];
+       copy.splice(indexOf, 1);
+       form.deleteImages = copy;
+   }
+}
+
 function submit() {
     if (form.processing) {
         return;
     }
 
-    const method = props.progression ? 'put' : 'post';
     const url = props.progression
         ? route('puzzles.progress.edit', [props.puzzle.id, props.progression.id])
         : route('puzzles.progress.new', [props.puzzle.id]);
 
-    form.submit(method, url, {
+    // Always do POST as PUT doesn't play nice with multipart/formdata
+    form.submit('post', url, {
         preserveScroll: true,
+        forceFormData: true,
         onSuccess: () => {
             isOpen.value = false;
         },
@@ -81,13 +98,13 @@ function submit() {
         <SheetTrigger>
             <slot />
         </SheetTrigger>
-        <SheetContent side="right">
+        <SheetContent side="right" class="flex flex-col">
             <SheetHeader>
                 <SheetTitle>{{ progression ? 'Aanpassen' : 'Nieuw toevoegen' }}</SheetTitle>
                 <SheetDescription>Heb jij deze puzzel al afgerond?</SheetDescription>
             </SheetHeader>
 
-            <form @submit.prevent="submit" class="my-6 flex flex-col gap-6">
+            <form @submit.prevent="submit" class="my-6 flex flex-col gap-6 grow overflow-y-scroll max-h-[100%]">
                 <div class="grid gap-2">
                     <Label htmlFor="status">Status</Label>
                     <select
@@ -129,7 +146,43 @@ function submit() {
                     <InputError :message="form.errors.comments" />
                 </div>
 
-                <!-- TODO: Fotos -->
+                <div class="grid gap-2" v-for="(image, index) of (progression?.images ?? [])">
+                    <Label>Foto: {{ index + 1 }}</Label>
+                    <a :href="image.url" target="_blank" class="flex items-center justify-center">
+                        <img loading="lazy" :src="image.url" alt="">
+                    </a>
+
+                    <div class="items-top flex gap-x-2">
+                        <Checkbox :id="'old-photo-' + image.id" :checked="form.deleteImages.includes(image.id)" @click="toggleDeleteImage(image.id)" />
+                        <div class="grid gap-1.5 leading-none">
+                            <label
+                                :for="'old-photo-' + image.id"
+                                class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                Foto verwijderen?
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid gap-2" v-for="(image, index) of form.newImages">
+                    <Label :htmlFor="'new-photo-' + index" class="flex items-center justify-between">
+                        Foto: {{ (progression?.images?.length ?? 0) + index + 1 }}
+<!--                        <Button variant="ghost" size="icon" class="mr-2 h-9 w-9 text-red-500" @click.prevent="addPhoto">-->
+<!--                            <CircleMinus class="h-5 w-5" />-->
+<!--                        </Button>-->
+                    </Label>
+                    <input :id="'new-photo-' + index" type="file" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                           @change="(event: any) => { console.log('Changed', event); form.newImages[index] = event.target.files[0] ?? undefined }" :disabled="form.processing" />
+                    <InputError :message="form.errors.newImages ? form.errors.newImages[index] : ''" />
+                </div>
+
+                <div class="grid gap-2">
+                    <Label>Foto toevoegen</Label>
+                    <Button variant="secondary" size="icon" class="mr-2 h-9 w-9 text-green-500" @click.prevent="addPhoto">
+                        <ImagePlus class="h-5 w-5" />
+                    </Button>
+                </div>
+
             </form>
 
             <SheetFooter>

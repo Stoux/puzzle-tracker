@@ -31,6 +31,23 @@ class PuzzleProgressionRequest extends FormRequest
                 'string',
                 'max:255'
             ],
+            'newImages' => [
+                'array',
+                'nullable',
+            ],
+            'newImages.*' => [
+                'file',
+                'mimes:jpeg,png,webp',
+                'max:16384',
+            ],
+            'deleteImages' => [
+                'array',
+                'nullable',
+            ],
+            'deleteImages.*' => [
+                'int',
+                'exists:media,id',
+            ]
         ];
     }
 

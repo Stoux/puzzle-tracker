@@ -10,8 +10,6 @@ class PuzzleProgressionResource
 
     public static function for(PuzzleProgression $progression): array
     {
-
-
         return [
             'id' =>  $progression->id,
             'user' => UserResource::for( $progression->user ),

@@ -16,14 +16,42 @@ class PuzzleProgressionController extends Controller
         $user_id = $request->user()->id;
         $this->earlyBailIfFuckery($progression, $puzzle, $user_id);
 
+        // Strip the newImages value from it
+        $validated = $request->validated();
+        unset($validated['newImages']);
+        unset($validated['deleteImages']);
+
+        // Update or create the progression
         if ($progression?->id) {
-            $progression->update($request->validated());
+            $progression->update($validated);
         } else {
-            PuzzleProgression::create([
+            $progression = PuzzleProgression::create([
                 'puzzle_id' => $puzzle->id,
                 'user_id' => $user_id,
-                ...$request->validated(),
+                ...$validated,
             ]);
+        }
+
+        // Handle file uploads
+        $files = $request->file('newImages');
+        \Log::info('newImages', [
+            'f' => $files,
+        ]);
+        if (! empty($files)) {
+            foreach ($files as $newImage) {
+                $progression->addMedia($newImage)->toMediaCollection();
+            }
+        }
+
+        // Delete images
+        $deleteImages = $request->input('deleteImages');
+        if (! empty($deleteImages)) {
+            $media = $progression->getMedia();
+            foreach($media as $image) {
+                if (in_array($image->id, $deleteImages)) {
+                    $image->delete();
+                }
+            }
         }
 
         return redirect(route('puzzles.show', [$puzzle->id]));

@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/dialog';
 import { computed } from 'vue';
 import TextLink from "@/components/TextLink.vue";
+import {ScrollArea} from "@/components/ui/scroll-area";
 
 const page = usePage<SharedData>();
 const user = page.props.auth.user as User;
@@ -114,11 +115,17 @@ function deleteProgression(progression: PuzzleProgression) {
                                 <DialogTitle>{{ progression.user.name }}:</DialogTitle>
                             </DialogHeader>
 
-                            <p v-if="progression.comments">
-                                {{ progression.comments }}
-                            </p>
+                            <ScrollArea class="overflow-y-scroll max-h-[90vh]">
+                                <div class="flex flex-col gap-4">
+                                    <p v-if="progression.comments">
+                                        {{ progression.comments }}
+                                    </p>
 
-                            <!-- TODO: Images -->
+                                    <img loading="lazy" class="w-full" :src="image.url" alt=""
+                                         v-for="image of progression.images" :key="image.id" />
+                                </div>
+
+                            </ScrollArea>
 
                             <DialogFooter>
                                 <DialogClose>

@@ -17,11 +17,12 @@ Route::middleware(['auth', 'verified'])->group(function() {
 
         return Inertia::render('Dashboard');
     })->name('dashboard');
+
     Route::get('puzzels', [ PuzzlesController::class, 'index' ])->name('puzzles');
     Route::get('puzzels/{puzzle}', [ PuzzlesController::class, 'show' ])->name('puzzles.show');
 
     Route::post('puzzels/{puzzle}/progress', [ PuzzleProgressionController::class, 'save' ])->name('puzzles.progress.new');
-    Route::put('puzzels/{puzzle}/progress/{progression}', [ PuzzleProgressionController::class, 'save' ])->name('puzzles.progress.edit');
+    Route::post('puzzels/{puzzle}/progress/{progression}', [ PuzzleProgressionController::class, 'save' ])->name('puzzles.progress.edit');
     Route::delete('puzzels/{puzzle}/progress/{progression}', [ PuzzleProgressionController::class, 'delete' ])->name('puzzles.progress.delete');
 
     Route::post('puzzels/{puzzle}/purchase', [ PurchasedPuzzlesController::class, 'save' ])->name('puzzles.purchase.new');
