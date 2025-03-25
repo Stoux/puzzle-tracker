@@ -106,13 +106,33 @@ const tags = computed<string[]>(() => {
 
                     <hr />
 
-                    <div class="flex flex-col gap-2">
-                        <h3 class="text-2xl">Status</h3>
-
-                        <ProgressStatusText :puzzle="puzzle" />
-                        <PurchaseStatusText :puzzle="puzzle" />
-
+                    <div class="flex gap-2">
+                        <div class="flex flex-col gap-2 grow">
+                            <ProgressStatusText :puzzle="puzzle" />
+                        </div>
+                        <div class="px-4 flex items-center">
+                            <a href="#status-overview"
+                                class="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:!decoration-current dark:decoration-neutral-500">
+                                Bekijk overzicht
+                            </a>
+                        </div>
                     </div>
+
+                    <hr />
+
+                    <div class="flex gap-2">
+                        <div class="flex flex-col gap-2 grow">
+                            <PurchaseStatusText :puzzle="puzzle" />
+                        </div>
+                        <div class="px-4 flex items-center">
+                            <a href="#purchase-overview"
+                               class="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:!decoration-current dark:decoration-neutral-500">
+                                Bekijk overzicht
+                            </a>
+                        </div>
+                    </div>
+
+                    <hr />
 
                     <div class="flex flex-col gap-2" v-if="puzzle.next_in_collection || puzzle.previous_in_collection || puzzle.relations.length">
                         <RelatedPuzzles :puzzle="puzzle" />

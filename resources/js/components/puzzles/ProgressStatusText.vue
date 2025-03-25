@@ -56,16 +56,11 @@ function hasFinished(progressions: PuzzleProgression[]) {
         Jij hebt deze puzzel
         <span v-if="finished === FinishType.NOT_FINISHED">nog <strong class="font-bold text-destructive">niet</strong></span>
         <span v-else>
-            al <strong class="font-bold text-green-600 dark:text-green-400">wel</strong>
             <span class="text-sm" v-if="finished === FinishType.FINISHED_RERELEASE"> (de heruitgave) </span>
             <span class="text-sm" v-if="finished === FinishType.FINISHED_ORIGINAL"> (de originele uitgave) </span>
+            al <strong class="font-bold text-green-600 dark:text-green-400">wel</strong>
         </span>
         afgerond.
-        <a
-            href="#status-overview"
-            class="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:!decoration-current dark:decoration-neutral-500"
-            >Bekijk overzicht</a
-        >
     </p>
     <p class="text-sm" v-if="finishedRetro">
         (Je hebt de Retro versie <strong class="font-bold text-green-600 dark:text-green-400">{{ finished === FinishType.NOT_FINISHED ? 'wel' : 'ook' }}</strong> afgerond.)
