@@ -14,10 +14,7 @@ class PuzzleProgressionResource
 
         return [
             'id' =>  $progression->id,
-            'user' => [
-                'id' => $progression->user_id,
-                'name' => $progression->user->name,
-            ],
+            'user' => UserResource::for( $progression->user ),
             'when' => implode(' tot ', array_filter([
                 $progression->started_on?->format('j M Y'),
                 $progression->completed_on?->format('j M Y'),

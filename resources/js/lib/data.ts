@@ -8,10 +8,10 @@ export enum PuzzleProgressionStatus {
 export function getStatusLabelFor(status: PuzzleProgressionStatus) {
     switch (status) {
         case PuzzleProgressionStatus.STARTED:
-            return 'Begonnen';
+            return 'Begonnen 🚀';
         case PuzzleProgressionStatus.FINISHED:
-            return 'Afgerond!';
+            return 'Opgelost 🤩';
         case PuzzleProgressionStatus.ABORTED:
-            return 'Gestopt...';
+            return 'Gestopt 😔';
     }
 }

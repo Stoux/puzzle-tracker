@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\PuzzleResource;
+use App\Http\Resources\UserResource;
 use App\Models\Puzzle;
+use App\Models\User;
 use Inertia\Inertia;
 
 class PuzzlesController extends Controller
@@ -27,6 +29,7 @@ class PuzzlesController extends Controller
     {
         return Inertia::render('puzzles/Show', [
             'puzzle' => PuzzleResource::forShow($puzzle),
+            'users' => User::all()->map(fn(User $user) => UserResource::for($user)),
         ]);
     }
 }

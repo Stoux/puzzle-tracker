@@ -2,16 +2,18 @@
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/vue3';
-import type { PuzzleDetails } from '@/types/wasgij';
+import type {PuzzleDetails, PuzzleUser} from '@/types/wasgij';
 import { computed, ref, watch } from 'vue';
 import ImageSlider from '@/components/puzzles/ImageSlider.vue';
 import HintDialog from '@/components/puzzles/HintDialog.vue';
 import ProgressStatusText from "@/components/puzzles/ProgressStatusText.vue";
 import PurchaseStatusText from "@/components/puzzles/PurchaseStatusText.vue";
 import ProgressOverview from "@/components/puzzles/ProgressOverview.vue";
+import PurchaseOverview from "@/components/puzzles/PurchaseOverview.vue";
 
 const props = defineProps<{
     puzzle: PuzzleDetails;
+    users: PuzzleUser[],
 }>();
 
 // Computed
@@ -125,7 +127,7 @@ const tags = computed<string[]>(() => {
 
                 <div class="flex flex-col gap-8">
                     <hr />
-                    <h2 class="text-xl" id="purchase-overview">Gekocht door</h2>
+                    <PurchaseOverview :puzzle="puzzle" :users="users" />
                 </div>
             </div>
         </div>

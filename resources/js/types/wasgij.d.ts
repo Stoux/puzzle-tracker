@@ -28,15 +28,13 @@ export interface PuzzleDetails extends Puzzle {
     dimensions: string|null;
 
     progressions: PuzzleProgression[],
+    purchases: PurchasedPuzzle[],
 
 }
 
 export interface PuzzleProgression {
     id: number;
-    user: {
-        id: number;
-        name: string;
-    };
+    user: PuzzleUser;
     when: string|null;
     started_on: string|null;
     completed_on: string|null;
@@ -47,4 +45,18 @@ export interface PuzzleProgression {
         comment: string|null,
         url: string;
     }[];
+}
+
+
+export interface PurchasedPuzzle {
+    id: number,
+    purchased_on: string|null;
+    purchased_on_formatted: string|null;
+    owner: PuzzleUser;
+    currently_at: PuzzleUser|null;
+}
+
+export interface PuzzleUser {
+    id: number;
+    name: string;
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\PurchasedPuzzle;
 use App\Models\Puzzle;
 use App\Models\PuzzleProgression;
 use Illuminate\Http\Request;
@@ -47,7 +48,7 @@ class PuzzleResource
             'dimensions' => $puzzle->dimensions,
 
             'progressions' => $puzzle->progressions->map(fn(PuzzleProgression $progression) => PuzzleProgressionResource::for($progression)),
-            'purchased' => $puzzle->purchases,
+            'purchases' => $puzzle->purchases->map(fn(PurchasedPuzzle $purchase) => PurchasedPuzzleResource::for($purchase)),
             'relations' => $puzzle->related_puzzles,
         ];
 

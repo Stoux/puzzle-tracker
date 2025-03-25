@@ -9,8 +9,8 @@ class PurchasedPuzzle extends Model {
 
     protected $fillable = [
         'puzzle_id',
-        'owner',
-        'currently_at',
+        'owner_id',
+        'currently_at_id',
         'purchased_on',
     ];
 
@@ -24,11 +24,11 @@ class PurchasedPuzzle extends Model {
     }
 
     public function owner(): BelongsTo {
-        return $this->belongsTo( User::class, 'owner' );
+        return $this->belongsTo( User::class, 'owner_id' );
     }
 
-    public function currentlyAt(): BelongsTo {
-        return $this->belongsTo( User::class, 'currently_at' );
+    public function currently_at(): BelongsTo {
+        return $this->belongsTo( User::class, 'currently_at_id' );
     }
 
 }

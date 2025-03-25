@@ -3,22 +3,17 @@
 namespace App\Http\Resources;
 
 use App\Models\PurchasedPuzzle;
-use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 
 /** @mixin PurchasedPuzzle */
-class PurchasedPuzzleResource extends JsonResource {
+class PurchasedPuzzleResource {
 
-	public function toArray( Request $request ): array {
+	public static function for( PurchasedPuzzle $purchase ): array {
 		return [
-			'id' => $this->id,
-			'purchased_on' => $this->purchased_on,
-			'created_at' => $this->created_at,
-			'updated_at' => $this->updated_at,
-
-			'puzzle_id' => $this->puzzle_id,
-			'owner' => $this->owner,
-			'currently_at' => $this->currently_at,
+			'id' => $purchase->id,
+			'purchased_on' => $purchase->purchased_on?->format('Y-m-d'),
+            'purchased_on_formatted' => $purchase->purchased_on?->format('j F Y'),
+			'owner' => UserResource::for( $purchase->owner ),
+			'currently_at' => UserResource::for( $purchase->currently_at ),
 		];
 	}
 }

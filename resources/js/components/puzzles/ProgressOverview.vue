@@ -34,7 +34,7 @@ function deleteProgression(progression: PuzzleProgression) {
 
 <template>
     <div class="flex justify-between align-center">
-        <h2 class="text-xl" id="status-overview">Afgerond door</h2>
+        <h2 class="text-xl" id="status-overview">Het raadsel opgelost door</h2>
         <ProgressForm :puzzle="puzzle">
             <Tooltip>
                 <TooltipTrigger as-child>
