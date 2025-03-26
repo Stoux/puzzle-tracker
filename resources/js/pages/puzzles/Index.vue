@@ -113,7 +113,7 @@ const filteredPuzzles = computed<Puzzle[]>(() => {
                 filters.push(p => p.purchased.at_me)
                 break;
             case StatusFilterModes.NOT_PURCHASED_ANYONE:
-                filters.push(p => !p.purchased.own && p.purchased.anyone)
+                filters.push(p => !p.purchased.own && !p.purchased.anyone)
                 break;
 
         }
