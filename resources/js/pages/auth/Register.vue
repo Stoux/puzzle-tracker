@@ -8,6 +8,10 @@ import AuthBase from '@/layouts/AuthLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { LoaderCircle } from 'lucide-vue-next';
 
+defineProps<{
+    canRegister?: boolean;
+}>();
+
 const form = useForm({
     name: '',
     email: '',
@@ -23,25 +27,36 @@ const submit = () => {
 </script>
 
 <template>
-    <AuthBase title="Create an account" description="Enter your details below to create your account">
-        <Head title="Register" />
+    <AuthBase title="Maak een account" description="Vul je gegevens in om een account te maken">
+        <Head title="Registeren" />
 
-        <form @submit.prevent="submit" class="flex flex-col gap-6">
+        <div class="flex flex-col gap-6">
+            <p class="text-red-500 text-center" v-if="!canRegister">
+                Sorry, een account maken is op dit moment niet mogelijk.
+            </p>
+
+            <div class="text-center text-sm text-muted-foreground">
+                Heb je al een account?
+                <TextLink :href="route('login')" class="underline underline-offset-4" :tabindex="6">Log in</TextLink>
+            </div>
+        </div>
+
+        <form @submit.prevent="submit" class="flex flex-col gap-6" v-if="canRegister">
             <div class="grid gap-6">
                 <div class="grid gap-2">
-                    <Label for="name">Name</Label>
+                    <Label for="name">Naam</Label>
                     <Input id="name" type="text" required autofocus :tabindex="1" autocomplete="name" v-model="form.name" placeholder="Full name" />
                     <InputError :message="form.errors.name" />
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="email">Email address</Label>
+                    <Label for="email">E-mailadres</Label>
                     <Input id="email" type="email" required :tabindex="2" autocomplete="email" v-model="form.email" placeholder="email@example.com" />
                     <InputError :message="form.errors.email" />
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="password">Password</Label>
+                    <Label for="password">Wachtwoord</Label>
                     <Input
                         id="password"
                         type="password"
@@ -55,7 +70,7 @@ const submit = () => {
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="password_confirmation">Confirm password</Label>
+                    <Label for="password_confirmation">Bevestig wachtwoord</Label>
                     <Input
                         id="password_confirmation"
                         type="password"
@@ -70,12 +85,12 @@ const submit = () => {
 
                 <Button type="submit" class="mt-2 w-full" tabindex="5" :disabled="form.processing">
                     <LoaderCircle v-if="form.processing" class="h-4 w-4 animate-spin" />
-                    Create account
+                    Account maken
                 </Button>
             </div>
 
             <div class="text-center text-sm text-muted-foreground">
-                Already have an account?
+                Heb je al een account?
                 <TextLink :href="route('login')" class="underline underline-offset-4" :tabindex="6">Log in</TextLink>
             </div>
         </form>

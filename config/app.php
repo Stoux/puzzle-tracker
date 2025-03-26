@@ -124,6 +124,7 @@ return [
     ],
 
     'force_https' => env('APP_FORCE_HTTPS', false),
+    'allow_registration' => env('APP_ALLOW_REGISTRATION', false),
 
     'wasgij' => [
         'user-agent' => env('WASGIJ_HTTP_CLIENT_USER_AGENT', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:137.0) Gecko/20100101 Firefox/137.0')
