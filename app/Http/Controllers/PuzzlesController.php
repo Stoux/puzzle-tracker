@@ -35,7 +35,7 @@ class PuzzlesController extends Controller
     {
         return Inertia::render('puzzles/Show', [
             'puzzle' => PuzzleResource::forDetails($puzzle),
-            'users' => User::all()->map(fn(User $user) => UserResource::for($user)),
+            'users' => User::where('is_puzzle_user', true)->get()->map(fn(User $user) => UserResource::for($user)),
         ]);
     }
 
