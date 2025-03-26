@@ -126,6 +126,13 @@ class ScrapeProductPageJob implements ShouldQueue
             if (str_starts_with($imageUrl, '//')) {
                 $imageUrl = 'https:'.$imageUrl;
             }
+
+            // Skip if invalid src: Tends to happen if source is invalid / image missing, they still output it:
+            // Example: <img src="Liquid error (snippets/sizechart line 100): invalid url input" width="100%" height="100%">
+            if (! str_starts_with($imageUrl, 'https://')) {
+                continue;
+            }
+
             $imageBasename = basename(explode('?', $imageUrl)[0]);
 
             // Check if we've previously saved that image
