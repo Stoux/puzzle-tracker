@@ -7,7 +7,6 @@ use App\Http\Resources\UserResource;
 use App\Models\Puzzle;
 use App\Models\User;
 use App\Services\PuzzleCacheService;
-use Illuminate\Cache\Repository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Inertia\Inertia;
