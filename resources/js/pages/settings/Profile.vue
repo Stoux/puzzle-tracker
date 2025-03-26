@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+import {Head, Link, router, useForm, usePage} from '@inertiajs/vue3';
 
 import DeleteUser from '@/components/DeleteUser.vue';
 import HeadingSmall from '@/components/HeadingSmall.vue';
@@ -10,10 +10,23 @@ import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/AppLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { type BreadcrumbItem, type SharedData, type User } from '@/types';
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import {
+    Dialog,
+    DialogClose,
+    DialogContent, DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger
+} from "@/components/ui/dialog";
+import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
+import {Trash} from "lucide-vue-next";
 
 interface Props {
     mustVerifyEmail: boolean;
     status?: string;
+    canLoginAs: User[]|false,
 }
 
 defineProps<Props>();
@@ -38,6 +51,13 @@ const submit = () => {
         preserveScroll: true,
     });
 };
+
+function loginAs(user: User) {
+    router.post(route('switch-user-context'), {
+        user: user.id,
+    });
+}
+
 </script>
 
 <template>
@@ -101,6 +121,54 @@ const submit = () => {
                     </div>
                 </form>
             </div>
+
+            <div class="flex flex-col space-y-6" v-if="canLoginAs">
+                <HeadingSmall title="Admin: User Switcher" description="Switch context (login) naar een andere gebruiker" />
+
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>ID</TableHead>
+                            <TableHead>Wie</TableHead>
+                            <TableHead>Email</TableHead>
+                            <TableHead>Acties</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        <TableRow v-for="user of canLoginAs">
+                            <TableCell>{{ user.id }}</TableCell>
+                            <TableCell>{{ user.name }}</TableCell>
+                            <TableCell>{{ user.email }}</TableCell>
+                            <TableCell>
+                                <Dialog>
+                                    <DialogTrigger>
+                                        <Button>
+                                            Login
+                                        </Button>
+                                    </DialogTrigger>
+                                    <DialogContent>
+                                        <DialogHeader>
+                                            <DialogTitle>Login als {{ user.name }}?</DialogTitle>
+                                            <DialogDescription>
+                                                Weet je zeker dat je wil switchen van gebruiker?
+                                            </DialogDescription>
+                                        </DialogHeader>
+                                        <DialogFooter>
+                                            <DialogClose>
+                                                <Button variant="secondary"> Annuleren </Button>
+                                            </DialogClose>
+                                            <DialogClose>
+                                                <Button @click="loginAs(user)">Switch!</Button>
+                                            </DialogClose>
+                                        </DialogFooter>
+                                    </DialogContent>
+                                </Dialog>
+                            </TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
+            </div>
+
 
 <!--            <DeleteUser />-->
         </SettingsLayout>

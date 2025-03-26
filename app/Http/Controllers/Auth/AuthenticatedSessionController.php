@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -49,4 +50,23 @@ class AuthenticatedSessionController extends Controller
 
         return redirect('/');
     }
+
+    public function switchContext(Request $request)
+    {
+        if (!$request->user()->is_admin) {
+            return response(status: 403);
+        }
+
+        $user = (int) $request->validate([
+            'user' => [
+                'required',
+                'exists:users,id',
+            ]
+        ])['user'];
+        
+        Auth::login(User::find($user));
+
+        return redirect(route('dashboard'));
+    }
+
 }

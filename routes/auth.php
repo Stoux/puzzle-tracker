@@ -53,4 +53,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
+
+    Route::post('switch-user-context', [AuthenticatedSessionController::class, 'switchContext'])->name('switch-user-context');
+
 });
